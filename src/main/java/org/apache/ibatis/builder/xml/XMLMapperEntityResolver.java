@@ -25,6 +25,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
+ * xml实体解析器，用于加载本地dtd文件
+ * <br>
+ * 
  * Offline entity resolver for the MyBatis DTDs.
  *
  * @author Clinton Begin

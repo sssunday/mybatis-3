@@ -16,12 +16,27 @@
 package org.apache.ibatis.parsing;
 
 /**
+ * 通用token解析器
+ * eg: 解析替换'${propertyKey}'
  * @author Clinton Begin
  */
 public class GenericTokenParser {
 
+  /**
+   * 起始标识
+   */
   private final String openToken;
+  
+  /**
+   * 结束标识
+   */
   private final String closeToken;
+  
+  /**
+   * token处理器,接口类， 由上游指定具体实现类
+   * 由handler来处理解析到的token（openToken 到  closeToken 之间的字符串）
+   * eg: propertyKey
+   */
   private final TokenHandler handler;
 
   public GenericTokenParser(String openToken, String closeToken, TokenHandler handler) {
@@ -30,6 +45,7 @@ public class GenericTokenParser {
     this.handler = handler;
   }
 
+  //定位并替换token
   public String parse(String text) {
     if (text == null || text.isEmpty()) {
       return "";
