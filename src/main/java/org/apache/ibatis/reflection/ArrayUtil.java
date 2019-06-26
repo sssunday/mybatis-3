@@ -38,7 +38,7 @@ public class ArrayUtil {
     if (!clazz.isArray()) {
       return obj.hashCode();
     }
-    final Class<?> componentType = clazz.getComponentType();
+    final Class<?> componentType = clazz.getComponentType();//如果是数组类型，获取数组中元素的Type
     if (long.class.equals(componentType)) {
       return Arrays.hashCode((long[]) obj);
     } else if (int.class.equals(componentType)) {
@@ -91,7 +91,7 @@ public class ArrayUtil {
     }
     final Class<?> componentType = clazz.getComponentType();
     if (long.class.equals(componentType)) {
-      return Arrays.equals((long[]) thisObj, (long[]) thatObj);
+      return Arrays.equals((long[]) thisObj, (long[]) thatObj);//逐个元素比较
     } else if (int.class.equals(componentType)) {
       return Arrays.equals((int[]) thisObj, (int[]) thatObj);
     } else if (short.class.equals(componentType)) {
@@ -107,7 +107,7 @@ public class ArrayUtil {
     } else if (double.class.equals(componentType)) {
       return Arrays.equals((double[]) thisObj, (double[]) thatObj);
     } else {
-      return Arrays.equals((Object[]) thisObj, (Object[]) thatObj);
+      return Arrays.equals((Object[]) thisObj, (Object[]) thatObj);//thisObj[i].equal(thatObj[i])
     }
   }
 

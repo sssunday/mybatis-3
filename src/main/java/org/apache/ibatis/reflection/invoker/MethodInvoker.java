@@ -31,6 +31,9 @@ public class MethodInvoker implements Invoker {
   public MethodInvoker(Method method) {
     this.method = method;
 
+    /**
+     * 有参数则type为入参类型（set），无参则为返参类型（get）
+     */
     if (method.getParameterTypes().length == 1) {
       type = method.getParameterTypes()[0];
     } else {
@@ -38,6 +41,9 @@ public class MethodInvoker implements Invoker {
     }
   }
 
+  /**
+   * 执行方法
+   */
   @Override
   public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
     try {

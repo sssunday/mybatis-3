@@ -35,6 +35,12 @@ public class RichType {
       add("bar");
     }
   };
+  
+  private List<String> richStrList = new ArrayList<String>() {
+	    {
+	      add("bar");
+	    }
+	  };
 
   public RichType getRichType() {
     return richType;
@@ -67,4 +73,20 @@ public class RichType {
   public void setRichMap(Map richMap) {
     this.richMap = richMap;
   }
+
+public String getRichField() {
+	return richField;
+}
+
+public void setRichField(String richField) {
+	this.richField = richField;
+}
+
+public List<String> getRichStrList() {
+	return richStrList;
+}
+
+public void setRichStrList(List<String> richStrList) {
+	this.richStrList = richStrList;
+}
 }

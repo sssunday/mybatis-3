@@ -41,19 +41,26 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
   private static final long serialVersionUID = -8855120656740914948L;
 
+  /**
+   ** 无参构造器创建对象
+   */
   @Override
   public <T> T create(Class<T> type) {
     return create(type, null, null);
   }
 
+  /**
+   ** 有参构造器创建对象
+   */
   @SuppressWarnings("unchecked")
   @Override
   public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-    Class<?> classToCreate = resolveInterface(type);
-    // we know types are assignable
+    Class<?> classToCreate = resolveInterface(type);//解析接口类
+    // we know types are assignable（可指派的，可分配的）
     return (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
   }
 
+  //设置属性 某些Obj工厂带有自己的属性
   @Override
   public void setProperties(Properties properties) {
     // no props for default
@@ -62,6 +69,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
   private  <T> T instantiateClass(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     try {
       Constructor<T> constructor;
+      //获取无参构造器
       if (constructorArgTypes == null || constructorArgs == null) {
         constructor = type.getDeclaredConstructor();
         try {
@@ -75,8 +83,10 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
           }
         }
       }
+      //根据参数类型列表,获取有参构造器
       constructor = type.getDeclaredConstructor(constructorArgTypes.toArray(new Class[constructorArgTypes.size()]));
       try {
+    	//传入参数对象列表创建对象
         return constructor.newInstance(constructorArgs.toArray(new Object[constructorArgs.size()]));
       } catch (IllegalAccessException e) {
         if (Reflector.canControlMemberAccessible()) {
@@ -87,6 +97,8 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
         }
       }
     } catch (Exception e) {
+      //TODO 此处写法值得借鉴
+      //打印异常
       String argTypes = Optional.ofNullable(constructorArgTypes).orElseGet(Collections::emptyList)
           .stream().map(Class::getSimpleName).collect(Collectors.joining(","));
       String argValues = Optional.ofNullable(constructorArgs).orElseGet(Collections::emptyList)
@@ -95,6 +107,15 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     }
   }
 
+  /**
+   * * 将几种常见的接口转化为实现类
+   * <br>List | Collection | Iterable  -> ArrayList
+   * <br>Map -> HashMap
+   * <br>SortedSet -> TreeSet
+   * <br>Set -> HashSet
+   * @param type
+   * @return
+   */
   protected Class<?> resolveInterface(Class<?> type) {
     Class<?> classToCreate;
     if (type == List.class || type == Collection.class || type == Iterable.class) {
@@ -111,6 +132,9 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     return classToCreate;
   }
 
+  /**
+   * <br>是否Collection或Collection的子类
+   */
   @Override
   public <T> boolean isCollection(Class<T> type) {
     return Collection.class.isAssignableFrom(type);

@@ -34,14 +34,27 @@ public abstract class BaseWrapper implements ObjectWrapper {
     this.metaObject = metaObject;
   }
 
+  /**
+   * 获取集合类型的属性
+   * @param prop
+   * @param object
+   * @return
+   */
   protected Object resolveCollection(PropertyTokenizer prop, Object object) {
     if ("".equals(prop.getName())) {
       return object;
     } else {
+      //获取不带index的属性，eg： prop是richList[0]  此处获取richList的值，结果为一个集合
       return metaObject.getValue(prop.getName());
     }
   }
 
+  /**
+   * 获取指定位置属性的值
+   * @param prop
+   * @param collection
+   * @return
+   */
   protected Object getCollectionValue(PropertyTokenizer prop, Object collection) {
     if (collection instanceof Map) {
       return ((Map) collection).get(prop.getIndex());
@@ -73,6 +86,13 @@ public abstract class BaseWrapper implements ObjectWrapper {
     }
   }
 
+  /**
+   * /**
+   * 设置指定位置属性的值
+   * @param prop
+   * @param collection
+   * @param value
+   */
   protected void setCollectionValue(PropertyTokenizer prop, Object collection, Object value) {
     if (collection instanceof Map) {
       ((Map) collection).put(prop.getIndex(), value);

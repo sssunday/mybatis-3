@@ -23,6 +23,7 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
+ * 集合Wrapper，不支持普通bean类型的操作，仅支持isCollection,add,addAll
  * @author Clinton Begin
  */
 public class CollectionWrapper implements ObjectWrapper {

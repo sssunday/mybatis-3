@@ -18,16 +18,38 @@ package org.apache.ibatis.reflection.property;
 import java.util.Iterator;
 
 /**
+ * <br>属性分词器，支持迭代的访问方式
  * @author Clinton Begin
  */
 public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
+  /**
+   *当前字符串
+   */
   private String name;
+  
+  /**
+   * 带索引的属性名
+   */
   private final String indexedName;
+  
+  /**
+   * <br>索引
+   *<br> 对于数组 name[0] ，则 index = 0
+   * <br>对于 Map map[key] ，则 index = key
+   */
   private String index;
+  
+  /**
+   * 剩余字符串
+   */
   private final String children;
 
+  /**
+   * 分词：name[index].children
+   * @param fullname
+   */
   public PropertyTokenizer(String fullname) {
-    int delim = fullname.indexOf('.');
+    int delim = fullname.indexOf('.');//以.号分割，name.children
     if (delim > -1) {
       name = fullname.substring(0, delim);
       children = fullname.substring(delim + 1);
@@ -35,14 +57,24 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
       name = fullname;
       children = null;
     }
-    indexedName = name;
-    delim = name.indexOf('[');
+    indexedName = name;//另存name
+    delim = name.indexOf('[');//以[ 分割name ， 并修改name， ->  name[index]
     if (delim > -1) {
       index = name.substring(delim + 1, name.length() - 1);
       name = name.substring(0, delim);
     }
   }
 
+  public static void main(String[] args) {
+	  PropertyTokenizer p = new PropertyTokenizer("array[1].obj.test");
+	  System.out.println(p);//[name=array, indexedName=array[1], index=1, children=obj.test]
+	  System.out.println(p.hasNext());//true
+	  System.out.println(p = p.next());//[name=obj, indexedName=obj, index=null, children=test]
+	  System.out.println(p.hasNext());//true
+	  System.out.println(p = p.next());//[name=test, indexedName=test, index=null, children=null]
+	  System.out.println(p.hasNext());//false
+}
+  
   public String getName() {
     return name;
   }
@@ -73,4 +105,11 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
   public void remove() {
     throw new UnsupportedOperationException("Remove is not supported, as it has no meaning in the context of properties.");
   }
+
+  @Override
+  public String toString() {
+	return "PropertyTokenizer [name=" + name + ", indexedName=" + indexedName + ", index=" + index + ", children="
+			+ children + "]";
+  }
+  
 }

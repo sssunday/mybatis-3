@@ -25,6 +25,7 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
+ * Map类Wrapper，类似BeanWrapper
  * @author Clinton Begin
  */
 public class MapWrapper extends BaseWrapper {
@@ -42,7 +43,7 @@ public class MapWrapper extends BaseWrapper {
       Object collection = resolveCollection(prop, map);
       return getCollectionValue(prop, collection);
     } else {
-      return map.get(prop.getName());
+      return map.get(prop.getName()); //各Wrapper不同的地方
     }
   }
 
@@ -52,7 +53,7 @@ public class MapWrapper extends BaseWrapper {
       Object collection = resolveCollection(prop, map);
       setCollectionValue(prop, collection, value);
     } else {
-      map.put(prop.getName(), value);
+      map.put(prop.getName(), value);//各Wrapper不同的地方
     }
   }
 

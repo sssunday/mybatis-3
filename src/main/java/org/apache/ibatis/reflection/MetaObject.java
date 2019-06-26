@@ -32,7 +32,14 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
  */
 public class MetaObject {
 
+  /**
+   * 原始对象
+   */
   private final Object originalObject;
+  
+  /**
+   * 封装过的对象
+   */
   private final ObjectWrapper objectWrapper;
   private final ObjectFactory objectFactory;
   private final ObjectWrapperFactory objectWrapperFactory;
@@ -112,11 +119,11 @@ public class MetaObject {
   public Object getValue(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
-      MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());
+      MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());//通过带索引的属性，获取本层属性的值，并封装为metaObject
       if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
         return null;
       } else {
-        return metaValue.getValue(prop.getChildren());
+        return metaValue.getValue(prop.getChildren());//获取子表达式的值（下一层） 递归
       }
     } else {
       return objectWrapper.get(prop);
@@ -126,7 +133,7 @@ public class MetaObject {
   public void setValue(String name, Object value) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
-      MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());
+      MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());//通过带索引的属性，获取本层属性的值，并封装为metaObject
       if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
         if (value == null) {
           // don't instantiate child path if value is null
@@ -135,12 +142,17 @@ public class MetaObject {
           metaValue = objectWrapper.instantiatePropertyValue(name, prop, objectFactory);
         }
       }
-      metaValue.setValue(prop.getChildren(), value);
+      metaValue.setValue(prop.getChildren(), value);//设置子表达式的值（下一层） 递归
     } else {
       objectWrapper.set(prop, value);
     }
   }
 
+  /**
+   * 获取属性，并封装到MetaObject
+   * @param name
+   * @return
+   */
   public MetaObject metaObjectForProperty(String name) {
     Object value = getValue(name);
     return MetaObject.forObject(value, objectFactory, objectWrapperFactory, reflectorFactory);

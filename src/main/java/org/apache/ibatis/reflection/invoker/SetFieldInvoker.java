@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import org.apache.ibatis.reflection.Reflector;
 
 /**
+ * *通过反射直接对filed进行设置值的操作，封装为一个Invoker，相当于自定义一个set方法
  * @author Clinton Begin
  */
 public class SetFieldInvoker implements Invoker {
@@ -29,6 +30,9 @@ public class SetFieldInvoker implements Invoker {
     this.field = field;
   }
 
+  /**
+   * 设置属性值
+   */
   @Override
   public Object invoke(Object target, Object[] args) throws IllegalAccessException {
     try {

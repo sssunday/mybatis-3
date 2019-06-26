@@ -66,7 +66,7 @@ class MetaClassTest {
     assertTrue(meta.hasGetter("richType.richList[0]"));
 
     assertEquals("richType.richProperty", meta.findProperty("richType.richProperty", false));
-
+    assertEquals("richType.richProperty", meta.findProperty("rich_type.rich_property", true));
     assertFalse(meta.hasGetter("[0]"));
   }
 
@@ -106,6 +106,7 @@ class MetaClassTest {
     assertEquals(List.class, meta.getGetterType("richType.richList"));
     assertEquals(Map.class, meta.getGetterType("richType.richMap"));
     assertEquals(List.class, meta.getGetterType("richType.richList[0]"));
+    assertEquals(String.class, meta.getGetterType("richType.richStrList[0]"));//测试泛型List<String>
   }
 
   @Test

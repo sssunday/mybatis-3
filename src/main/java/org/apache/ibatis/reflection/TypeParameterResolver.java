@@ -26,21 +26,30 @@ import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 
 /**
+ ** type解析器，可处理泛型
  * @author Iwao AVE!
  */
 public class TypeParameterResolver {
 
+  //ParameterizedType  ParameterizedType表示参数化类型，也就是泛型，例如List<T>、Set<T>等
+  //TypeVariable  泛型的类型变量，指的是List<T>、Map<K,V>中的T，K，V等值，实际的Java类型是TypeVariableImpl（TypeVariable的子类）；此外，还可以对类型变量加上extend限定，这样会有类型变量对应的上限；
+  //GenericArrayType 泛型数组类型，例如List<String>[] 、T[]等
+  //Class Type接口的实现类，是我们工作中常用到的一个对象；在Java中，每个.class文件在程序运行期间，都对应着一个Class对象，这个对象保存有这个类的全部信息；因此，Class对象也称之为Java反射的基础；
+  //WildcardType ？---通配符表达式，表示通配符泛型，但是WildcardType并不属于Java-Type中的一种；例如：List<? extends Number> 和 List<? super Integer>；
+	
   /**
+   ** 解析Field的类型，泛型会解析为runtime类型
    * @return The field type as {@link Type}. If it has type parameters in the declaration,<br>
    *         they will be resolved to the actual runtime {@link Type}s.
    */
   public static Type resolveFieldType(Field field, Type srcType) {
-    Type fieldType = field.getGenericType();
-    Class<?> declaringClass = field.getDeclaringClass();
+    Type fieldType = field.getGenericType();//获取泛型的runtime类型
+    Class<?> declaringClass = field.getDeclaringClass();//获取定义本field的类的类型
     return resolveType(fieldType, srcType, declaringClass);
   }
 
   /**
+   ** 解析返回类型，处理泛型出现的情况，解析为实际的runtime类型
    * @return The return type of the method as {@link Type}. If it has type parameters in the declaration,<br>
    *         they will be resolved to the actual runtime {@link Type}s.
    */
@@ -51,6 +60,7 @@ public class TypeParameterResolver {
   }
 
   /**
+   * <br>解析入参类型，处理泛型出现的情况，解析为实际的runtime类型
    * @return The parameter types of the method as an array of {@link Type}s. If they have type parameters in the declaration,<br>
    *         they will be resolved to the actual runtime {@link Type}s.
    */
@@ -64,6 +74,13 @@ public class TypeParameterResolver {
     return result;
   }
 
+  /**
+   * 
+   * @param type 要解析的类型
+   * @param srcType 来源类型
+   * @param declaringClass 定义的类
+   * @return
+   */
   private static Type resolveType(Type type, Type srcType, Class<?> declaringClass) {
     if (type instanceof TypeVariable) {
       return resolveTypeVar((TypeVariable<?>) type, srcType, declaringClass);
@@ -77,6 +94,7 @@ public class TypeParameterResolver {
   }
 
   private static Type resolveGenericArrayType(GenericArrayType genericArrayType, Type srcType, Class<?> declaringClass) {
+	//返回泛型数组中元素的Type类型，即List<String>[] 中的 List<String>（ParameterizedTypeImpl）、T[] 中的T（TypeVariableImpl）；
     Type componentType = genericArrayType.getGenericComponentType();
     Type resolvedComponentType = null;
     if (componentType instanceof TypeVariable) {
@@ -93,10 +111,21 @@ public class TypeParameterResolver {
     }
   }
 
+  /**
+   * 解析 ParameterizedType 类型
+   * @param parameterizedType
+   * @param srcType
+   * @param declaringClass
+   * @return
+   */
   private static ParameterizedType resolveParameterizedType(ParameterizedType parameterizedType, Type srcType, Class<?> declaringClass) {
-    Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+    
+	//rawType，泛型所在的类型，  例如： 例如List<String>中的 interface java.util.List
+	Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+	//getActualTypeArguments 泛型实际类型列表，<>中的实际类型   例如List<String>中的Class java.lang.String
     Type[] typeArgs = parameterizedType.getActualTypeArguments();
     Type[] args = new Type[typeArgs.length];
+    //依次解析getActualTypeArguments中的类型，可能会有泛型嵌套，例如List<List<String>>
     for (int i = 0; i < typeArgs.length; i++) {
       if (typeArgs[i] instanceof TypeVariable) {
         args[i] = resolveTypeVar((TypeVariable<?>) typeArgs[i], srcType, declaringClass);

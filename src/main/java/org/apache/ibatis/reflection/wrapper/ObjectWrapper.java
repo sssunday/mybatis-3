@@ -26,8 +26,18 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
  */
 public interface ObjectWrapper {
 
+  /**
+   * * 获取值
+   * @param prop
+   * @return
+   */
   Object get(PropertyTokenizer prop);
 
+  /**
+   * 设置值
+   * @param prop
+   * @param value
+   */
   void set(PropertyTokenizer prop, Object value);
 
   String findProperty(String name, boolean useCamelCaseMapping);
@@ -44,12 +54,32 @@ public interface ObjectWrapper {
 
   boolean hasGetter(String name);
 
+  /**
+   * 创建指定属性的值，封装到MetaObject
+   * @param name
+   * @param prop
+   * @param objectFactory
+   * @return
+   */
   MetaObject instantiatePropertyValue(String name, PropertyTokenizer prop, ObjectFactory objectFactory);
 
+  /**
+   * 是否集合
+   * @return
+   */
   boolean isCollection();
 
+  /**
+   * 添加对象到集合
+   * @param element
+   */
   void add(Object element);
 
+  /**
+   * 添加集合到集合
+   * @param <E>
+   * @param element
+   */
   <E> void addAll(List<E> element);
 
 }
