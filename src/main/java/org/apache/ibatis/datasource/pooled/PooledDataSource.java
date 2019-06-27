@@ -148,6 +148,7 @@ public class PooledDataSource implements DataSource {
 
   /**
    * 获取连接
+   * return 池化连接代理
    */
   @Override
   public Connection getConnection() throws SQLException {

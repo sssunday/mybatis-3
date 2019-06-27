@@ -25,6 +25,7 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
+ **ManagedTransaction 工厂实现类
  * Creates {@link ManagedTransaction} instances.
  *
  * @author Clinton Begin
@@ -37,6 +38,7 @@ public class ManagedTransactionFactory implements TransactionFactory {
 
   @Override
   public void setProperties(Properties props) {
+	//获取参数中的closeConnection属性，设置到工厂属性中
     if (props != null) {
       String closeConnectionProperty = props.getProperty("closeConnection");
       if (closeConnectionProperty != null) {
