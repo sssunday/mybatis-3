@@ -18,12 +18,15 @@ package org.apache.ibatis.datasource.pooled;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSourceFactory;
 
 /**
+ * 
  * @author Clinton Begin
  */
 public class PooledDataSourceFactory extends UnpooledDataSourceFactory {
 
+  //构造方法
   public PooledDataSourceFactory() {
     this.dataSource = new PooledDataSource();
   }
 
+  //获取dataSource以及设置属性均在父类UnpooledDataSourceFactory中已实现
 }

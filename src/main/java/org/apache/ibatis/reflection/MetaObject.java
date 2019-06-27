@@ -116,6 +116,11 @@ public class MetaObject {
     return objectWrapper.hasGetter(name);
   }
 
+  /**
+   * 获取属性值
+   * @param name
+   * @return
+   */
   public Object getValue(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
@@ -130,6 +135,11 @@ public class MetaObject {
     }
   }
 
+  /**
+   * 设置属性值
+   * @param name
+   * @param value
+   */
   public void setValue(String name, Object value) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {

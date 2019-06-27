@@ -20,7 +20,12 @@ package org.apache.ibatis.executor;
  */
 public class ErrorContext {
 
+  /**
+   * 行分隔标志，  默认使用换行符
+   */
   private static final String LINE_SEPARATOR = System.getProperty("line.separator","\n");
+  
+  //异常的本线程上下文
   private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<>();
 
   private ErrorContext stored;
@@ -99,6 +104,9 @@ public class ErrorContext {
     return this;
   }
 
+  /**
+   * mybatis 异常打印格式
+   */
   @Override
   public String toString() {
     StringBuilder description = new StringBuilder();

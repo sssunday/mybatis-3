@@ -38,25 +38,29 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     this.dataSource = new UnpooledDataSource();
   }
 
+  /**
+   * 设置DataSource的属性和DataSource.driverProperties的属性
+   */
   @Override
   public void setProperties(Properties properties) {
     Properties driverProperties = new Properties();
+    //封装为MetaObject，方便通过反射去匹配和设置属性
     MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
     for (Object key : properties.keySet()) {
       String propertyName = (String) key;
-      if (propertyName.startsWith(DRIVER_PROPERTY_PREFIX)) {
+      if (propertyName.startsWith(DRIVER_PROPERTY_PREFIX)) {//driver.开头的属性，封装到driverProperties中
         String value = properties.getProperty(propertyName);
         driverProperties.setProperty(propertyName.substring(DRIVER_PROPERTY_PREFIX_LENGTH), value);
-      } else if (metaDataSource.hasSetter(propertyName)) {
+      } else if (metaDataSource.hasSetter(propertyName)) {//其他属性，判断是否有setter方法
         String value = (String) properties.get(propertyName);
-        Object convertedValue = convertValue(metaDataSource, propertyName, value);
-        metaDataSource.setValue(propertyName, convertedValue);
+        Object convertedValue = convertValue(metaDataSource, propertyName, value);//通过判断setter方法的入参类型，去做类型转换
+        metaDataSource.setValue(propertyName, convertedValue);//设置属性值，支持分词的表达式（a.b[1].c）
       } else {
         throw new DataSourceException("Unknown DataSource property: " + propertyName);
       }
     }
     if (driverProperties.size() > 0) {
-      metaDataSource.setValue("driverProperties", driverProperties);
+      metaDataSource.setValue("driverProperties", driverProperties);//设置driverProperties
     }
   }
 
@@ -65,9 +69,18 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     return dataSource;
   }
 
+  /**
+   * 通过属性的setter方法的入参类型，做类型转换
+   * @param metaDataSource
+   * @param propertyName
+   * @param value
+   * @return
+   */
   private Object convertValue(MetaObject metaDataSource, String propertyName, String value) {
     Object convertedValue = value;
-    Class<?> targetType = metaDataSource.getSetterType(propertyName);
+    Class<?> targetType = metaDataSource.getSetterType(propertyName);//获取setter的入参类型
+    
+    //只处理int，long，boolean类型
     if (targetType == Integer.class || targetType == int.class) {
       convertedValue = Integer.valueOf(value);
     } else if (targetType == Long.class || targetType == long.class) {
