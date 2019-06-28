@@ -27,9 +27,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
+import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.io.Resources;
 
 /**
+ **支持序列化值的 Cache 实现类
  * @author Clinton Begin
  */
 public class SerializedCache implements Cache {
@@ -90,6 +92,11 @@ public class SerializedCache implements Cache {
     return delegate.equals(obj);
   }
 
+  /**
+   * 序列化
+   * @param value
+   * @return
+   */
   private byte[] serialize(Serializable value) {
     try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
          ObjectOutputStream oos = new ObjectOutputStream(bos)) {
@@ -101,6 +108,11 @@ public class SerializedCache implements Cache {
     }
   }
 
+  /**
+   * 反序列化
+   * @param value
+   * @return
+   */
   private Serializable deserialize(byte[] value) {
     Serializable result;
     try (ByteArrayInputStream bis = new ByteArrayInputStream(value);
@@ -118,6 +130,9 @@ public class SerializedCache implements Cache {
       super(in);
     }
 
+    /**
+     * 解析类，自定义解析方法
+     */
     @Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws ClassNotFoundException {
       return Resources.classForName(desc.getName());
@@ -125,4 +140,14 @@ public class SerializedCache implements Cache {
 
   }
 
+  //测试：null也是可以序列化的
+  public static void main(String[] args) {
+	  SerializedCache cache = new SerializedCache(null);
+	  CacheKey object = new CacheKey();
+	  byte[] b = cache.serialize((Serializable) object);
+	  System.out.println("object:\n" + b);
+	  CacheKey object2 = null;
+	  byte[] b2 = cache.serialize((Serializable) object2);
+	  System.out.println("null:\n" + b2);
+  }
 }

@@ -24,14 +24,27 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ ** 基于 java.lang.ref.SoftReference 的 Cache 实现类。（软引用）
+ *<br>
+ *<br> 软引用和弱引用的特性基本一致， 主要的区别在于软引用在内存不足时才会被回收。如果一个对象只具有软引用，Java GC在内存充足的时候不会回收它，内存不足时才会被回收。
+ *<br>
+ *<br>四种引用类型 https://juejin.im/post/5a5129f5f265da3e317dfc08<br>
+ *
  * Soft Reference cache decorator
  * Thanks to Dr. Heinz Kabutz for his guidance here.
  *
  * @author Clinton Begin
- */
+ */	
 public class SoftCache implements Cache {
+
+  //--------------------------------
+  //逻辑同WeakCache类似
+  //--------------------------------
+	
+	
   private final Deque<Object> hardLinksToAvoidGarbageCollection;
   private final ReferenceQueue<Object> queueOfGarbageCollectedEntries;
+  
   private final Cache delegate;
   private int numberOfHardLinks;
 
