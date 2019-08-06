@@ -54,10 +54,12 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   @Override
   public void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
     if (parameter == null) {
+      //参数为空时，设置为null类型
       if (jdbcType == null) {
         throw new TypeException("JDBC requires that the JdbcType must be specified for all nullable parameters.");
       }
       try {
+    	//设置null
         ps.setNull(i, jdbcType.TYPE_CODE);
       } catch (SQLException e) {
         throw new TypeException("Error setting null for parameter #" + i + " with JdbcType " + jdbcType + " . "
@@ -66,6 +68,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
       }
     } else {
       try {
+    	//设置非空类型参数，由具体的子类实现
         setNonNullParameter(ps, i, parameter, jdbcType);
       } catch (Exception e) {
         throw new TypeException("Error setting non null for parameter #" + i + " with JdbcType " + jdbcType + " . "
@@ -75,6 +78,9 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
     }
   }
 
+  /**
+   * getResult，本类依然是抽象层，具体由子类实现
+   */
   @Override
   public T getResult(ResultSet rs, String columnName) throws SQLException {
     try {
@@ -102,10 +108,23 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
     }
   }
 
+  /**
+   * 设置非空参数，抽象方法
+   * @param ps
+   * @param i
+   * @param parameter
+   * @param jdbcType
+   * @throws SQLException
+   */
   public abstract void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
   /**
+   * 获取结果
+   * <br>Nullable 可为空
+   * @param rs
    * @param columnName Colunm name, when configuration <code>useColumnLabel</code> is <code>false</code>
+   * @return
+   * @throws SQLException
    */
   public abstract T getNullableResult(ResultSet rs, String columnName) throws SQLException;
 

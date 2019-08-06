@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import java.util.Date;
 
 /**
+ ** 日期类型处理器 - 只处理日期，不管时间2019-06-28 00:00:00
+ ** <br>java.util.Date <--> java.sql.Date
  * @author Clinton Begin
  */
 public class DateOnlyTypeHandler extends BaseTypeHandler<Date> {

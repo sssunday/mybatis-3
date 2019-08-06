@@ -23,6 +23,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 /**
+ ** 日期类型处理器 - 日期时间都处理2019-06-28 18:33:21
+ *<br>java.util.Date <--> java.sql.Timestamp
  * @author Clinton Begin
  */
 public class DateTypeHandler extends BaseTypeHandler<Date> {
@@ -30,13 +32,18 @@ public class DateTypeHandler extends BaseTypeHandler<Date> {
   @Override
   public void setNonNullParameter(PreparedStatement ps, int i, Date parameter, JdbcType jdbcType)
       throws SQLException {
+	// 将 Date 转换成 Timestamp 类型,   然后设置到 ps 中
+    // parameter: java.util.Date -> java.sql.Timestamp
     ps.setTimestamp(i, new Timestamp(parameter.getTime()));
   }
 
   @Override
   public Date getNullableResult(ResultSet rs, String columnName)
       throws SQLException {
+	//获取Timestamp类型结果
     Timestamp sqlTimestamp = rs.getTimestamp(columnName);
+    
+    //java.sql.Timestamp -> java.util.Date
     if (sqlTimestamp != null) {
       return new Date(sqlTimestamp.getTime());
     }

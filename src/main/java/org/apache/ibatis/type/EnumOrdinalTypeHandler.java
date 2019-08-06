@@ -25,9 +25,22 @@ import java.sql.SQLException;
  */
 public class EnumOrdinalTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
+	/*
+   	因为数据库不存在枚举类型，所以讲枚举类型持久化到数据库有两种方式，Enum.name <=> String 和 Enum.ordinal <=> int
+   */
+	
   private final Class<E> type;
+  
+  /**
+   * 枚举的所有元素
+   */
   private final E[] enums;
 
+  /**
+   * 只有带参数的构造器， 没有默认构造器
+   * 必需传入枚举的类型
+   * @param type
+   */
   public EnumOrdinalTypeHandler(Class<E> type) {
     if (type == null) {
       throw new IllegalArgumentException("Type argument cannot be null");
@@ -39,6 +52,10 @@ public class EnumOrdinalTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
     }
   }
 
+  /**
+   * 取Enum.ordinal 按int处理
+   * Enum.ordinal 枚举的零序列
+   */
   @Override
   public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
     ps.setInt(i, parameter.ordinal());
@@ -71,6 +88,11 @@ public class EnumOrdinalTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
     return toOrdinalEnum(ordinal);
   }
 
+  /**
+   * 根据序列定位到枚举的元素
+   * @param ordinal
+   * @return
+   */
   private E toOrdinalEnum(int ordinal) {
     try {
       return enums[ordinal];

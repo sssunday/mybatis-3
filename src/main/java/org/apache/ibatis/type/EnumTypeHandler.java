@@ -21,12 +21,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ ** Enum 类型的 TypeHandler 实现类
  * @author Clinton Begin
  */
 public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
+  /*
+   	因为数据库不存在枚举类型，所以讲枚举类型持久化到数据库有两种方式，Enum.name <=> String 和 Enum.ordinal <=> int
+   */
+	
+  /**
+   * 枚举的类型
+   */
   private final Class<E> type;
 
+  /**
+   * 只有带参数的构造器， 没有默认构造器
+   * 必需传入枚举的类型
+   * @param type
+   */
   public EnumTypeHandler(Class<E> type) {
     if (type == null) {
       throw new IllegalArgumentException("Type argument cannot be null");
@@ -34,15 +47,25 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
     this.type = type;
   }
 
+  /**
+   * 设置参数， 将 Enum 转换成 String 类型
+   */
   @Override
   public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
-    if (jdbcType == null) {
+	// 
+	// 获取Enum的name， 将 Enum 转换成 String 类型
+	if (jdbcType == null) {
+	  // 如果jdbcType为空， 按String类型处理
       ps.setString(i, parameter.name());
     } else {
+      // 按jdbcType处理，传入的参数任然是String类型
       ps.setObject(i, parameter.name(), jdbcType.TYPE_CODE); // see r3589
     }
   }
 
+  /**
+   * 将 String 转换成 Enum 类型
+   */
   @Override
   public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
     String s = rs.getString(columnName);

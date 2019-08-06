@@ -21,10 +21,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ ** Object 类型的 TypeHandler 实现类
  * @author Clinton Begin
  */
 public class ObjectTypeHandler extends BaseTypeHandler<Object> {
 
+  /*
+   * 直接将对象传入，不做转换
+   */
+	
   @Override
   public void setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType)
       throws SQLException {

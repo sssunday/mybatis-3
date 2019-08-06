@@ -23,6 +23,8 @@ import java.sql.Time;
 import java.util.Date;
 
 /**
+ ** 日期类型处理器 - 只处理时间，不管日期   0000-00-00 18:33:21
+ ** <br>java.util.Date <--> java.sql.Time
  * @author Clinton Begin
  */
 public class TimeOnlyTypeHandler extends BaseTypeHandler<Date> {
